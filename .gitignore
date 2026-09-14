@@ -1,0 +1,27 @@
+# Python
+__pycache__/
+*.py[cod]
+
+# Ambiente virtual
+.venv/
+venv/
+env/
+
+# Pytest
+.pytest_cache/
+
+# VS Code
+.vscode/
+
+# Variáveis e segredos
+.env
+.env.*
+!.env.example
+
+# Arquivos gerados
+output/
+test-results/
+playwright-report/
+
+# Logs
+*.log

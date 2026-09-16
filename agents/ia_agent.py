@@ -63,6 +63,8 @@ def identificar_dominio(estoria):
 
     return None
 
+def gerar_por_dominio(dominio):
+    return DOMINIOS[dominio]()
 
 def gerar_massa(estoria):
     dominio = identificar_dominio(estoria)
@@ -73,7 +75,7 @@ def gerar_massa(estoria):
             "massas": []
         }
 
-    resultado = DOMINIOS[dominio]()
+    resultado = gerar_por_dominio(dominio)
 
     if not validar_resultado(resultado):
         raise ValueError("Resultado gerado pelo agente é inválido")

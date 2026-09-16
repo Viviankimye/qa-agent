@@ -1,4 +1,9 @@
-from agents.ia_agent import gerar_massa
+import pytest
+from agents.ia_agent import (
+    gerar_massa,
+    identificar_dominio,
+    gerar_por_dominio
+)
 from tools.validator import validar_resultado
 
 def test_identifica_login():
@@ -68,3 +73,30 @@ def test_recuperacao_senha_tem_prioridade_sobre_login():
     )
 
     assert "Recuperação de senha com e-mail válido" in resultado["cenarios"]
+
+def test_identifica_dominio_login():
+    assert identificar_dominio(
+        "Como usuário, quero realizar login na plataforma."
+    ) == "login"
+
+
+def test_identifica_dominio_cadastro():
+    assert identificar_dominio(
+        "Como visitante, quero realizar meu cadastro."
+    ) == "cadastro"
+
+
+def test_identifica_dominio_desconhecido():
+    assert identificar_dominio(
+        "Como usuário, quero consultar meu saldo."
+    ) is None
+
+def test_gerar_por_dominio_login():
+    resultado = gerar_por_dominio("login")
+
+    assert "Login com e-mail e senha válidos" in resultado["cenarios"]
+    assert "email" in resultado["massas"][0]
+
+def test_gerar_por_dominio_invalido():
+    with pytest.raises(KeyError):
+        gerar_por_dominio("dominio_inexistente")

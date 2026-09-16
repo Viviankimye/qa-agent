@@ -1,3 +1,4 @@
+from tools.validator import validar_resultado
 from domains import (
     login,
     cadastro,
@@ -15,24 +16,50 @@ DOMINIOS = {
     "recuperacao_senha": recuperacao_senha.gerar
 }
 
+PALAVRAS_CHAVE = {
+    "login": [
+        "login",
+        "entrar na conta",
+        "entrar na minha conta",
+        "acessar minha conta"
+    ],
+    "cadastro": [
+        "cadastro",
+        "cadastrar",
+        "criar conta"
+    ],
+    "pix": [
+        "pix",
+        "pagamento"
+    ],
+    "recuperacao_senha": [
+        "recuperar senha",
+        "esqueci minha senha",
+        "senha"
+    ],
+    "renegociacao": [
+        "renegociacao",
+        "renegociação",
+        "imovel",
+        "dívida"
+    ]
+}
 
 def identificar_dominio(estoria):
     texto = estoria.lower()
 
-    if "senha" in texto or "recuperar" in texto:
-        return "recuperacao_senha"
+    prioridades = [
+        "recuperacao_senha",
+        "login",
+        "cadastro",
+        "pix",
+        "renegociacao"
+    ]
 
-    if "login" in texto:
-        return "login"
-
-    if "cadastro" in texto:
-        return "cadastro"
-
-    if "pix" in texto or "pagamento" in texto:
-        return "pix"
-
-    if "renegociacao" in texto or "imovel" in texto:
-        return "renegociacao"
+    for dominio in prioridades:
+        for palavra in PALAVRAS_CHAVE[dominio]:
+            if palavra in texto:
+                return dominio
 
     return None
 
@@ -46,4 +73,9 @@ def gerar_massa(estoria):
             "massas": []
         }
 
-    return DOMINIOS[dominio]()
+    resultado = DOMINIOS[dominio]()
+
+    if not validar_resultado(resultado):
+        raise ValueError("Resultado gerado pelo agente é inválido")
+
+    return resultado

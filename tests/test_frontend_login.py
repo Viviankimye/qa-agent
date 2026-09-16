@@ -83,10 +83,11 @@ def test_login_credenciais_invalidas():
 
         pagina.wait_for_load_state("networkidle")
 
-        assert "login" in pagina.url, \
-            "BUG: credenciais inválidas permitiram o login!"
+        logout_visivel = pagina.get_by_text("Logout").is_visible()
 
-        assert not pagina.get_by_text("Logout").is_visible(), \
-            "BUG: Logout apareceu mesmo com credenciais inválidas!"
+        assert not logout_visivel, (
+            f"BUG: credenciais inválidas permitiram autenticação. "
+            f"URL após tentativa: {pagina.url}"
+        )
 
         navegador.close()

@@ -64,6 +64,9 @@ def identificar_dominio(estoria):
     return None
 
 def gerar_por_dominio(dominio):
+    if dominio not in DOMINIOS:
+        raise ValueError("Domínio não suportado")
+
     return DOMINIOS[dominio]()
 
 def gerar_massa(estoria):

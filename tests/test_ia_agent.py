@@ -98,5 +98,5 @@ def test_gerar_por_dominio_login():
     assert "email" in resultado["massas"][0]
 
 def test_gerar_por_dominio_invalido():
-    with pytest.raises(KeyError):
+    with pytest.raises(ValueError, match="Domínio não suportado"):
         gerar_por_dominio("dominio_inexistente")

@@ -1,3 +1,4 @@
+from unittest.mock import patch
 import pytest
 from agents.ia_agent import (
     gerar_massa,
@@ -55,7 +56,7 @@ def test_resultado_do_agente_e_valido():
         "Como usuário, quero realizar login na plataforma."
     )
 
-    assert validar_resultado(resultado) is True    
+    assert validar_resultado(resultado) is True
 
 def test_identifica_login_com_entrar_na_conta():
     resultado = gerar_massa(
@@ -79,12 +80,10 @@ def test_identifica_dominio_login():
         "Como usuário, quero realizar login na plataforma."
     ) == "login"
 
-
 def test_identifica_dominio_cadastro():
     assert identificar_dominio(
         "Como visitante, quero realizar meu cadastro."
     ) == "cadastro"
-
 
 def test_identifica_dominio_desconhecido():
     assert identificar_dominio(
@@ -100,3 +99,85 @@ def test_gerar_por_dominio_login():
 def test_gerar_por_dominio_invalido():
     with pytest.raises(ValueError, match="Domínio não suportado"):
         gerar_por_dominio("dominio_inexistente")
+
+def test_gerar_massa_retorna_resultado_valido():
+    resultado = gerar_massa(
+        "Como usuário, quero realizar cadastro."
+    )
+
+    assert validar_resultado(resultado) is True
+
+def test_gerar_massa_rejeita_resultado_invalido():
+    resultado_invalido = {
+        "cenarios": [],
+        "massas": []
+    }
+
+    with patch(
+        "agents.ia_agent.gerar_por_dominio",
+        return_value=resultado_invalido
+    ):
+        with pytest.raises(
+            ValueError,
+            match="Resultado gerado pelo agente é inválido"
+        ):
+            gerar_massa(
+                "Como usuário, quero realizar login na plataforma."
+            )
+
+def test_gerar_por_dominio_chama_gerador_do_dominio():
+    resultado_esperado = {
+        "cenarios": ["Cenário de teste"],
+        "massas": [{"campo": "valor"}]
+    }
+
+    with patch(
+        "agents.ia_agent.DOMINIOS",
+        {"login": lambda: resultado_esperado}
+    ):
+        resultado = gerar_por_dominio("login")
+
+    assert resultado == resultado_esperado
+
+@pytest.mark.parametrize(
+    "dominio",
+    [
+        "login",
+        "cadastro",
+        "pix",
+        "recuperacao_senha",
+        "renegociacao"
+    ]
+)
+def test_todos_os_dominios_geram_resultado_valido(dominio):
+    resultado = gerar_por_dominio(dominio)
+
+    assert validar_resultado(resultado) is True
+
+@pytest.mark.parametrize(
+    "estoria, dominio_esperado",
+    [
+        (
+            "Como usuário, quero realizar login.",
+            "login"
+        ),
+        (
+            "Como usuário, esqueci minha senha.",
+            "recuperacao_senha"
+        ),
+        (
+            "Como visitante, quero criar minha conta.",
+            "cadastro"
+        ),
+        (
+            "Como cliente, quero realizar um pagamento via Pix.",
+            "pix"
+        ),
+        (
+            "Como cliente, quero renegociar minha dívida.",
+            "renegociacao"
+        )
+    ]
+)
+def test_classificacao_de_estorias(estoria, dominio_esperado):
+    assert identificar_dominio(estoria) == dominio_esperado

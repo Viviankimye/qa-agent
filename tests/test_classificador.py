@@ -74,3 +74,26 @@ def test_classificador_identifica_multiplas_evidencias():
     assert resultado["dominio"] == "login"
     assert "login" in resultado["palavras_encontradas"]
     assert "entrar na minha conta" in resultado["palavras_encontradas"]
+
+def test_classificador_calcula_confianca_com_uma_evidencia():
+    resultado = classificar_com_evidencia(
+        "Como usuário, quero realizar login."
+    )
+
+    assert resultado["confianca"] == 0.5
+
+def test_classificador_calcula_confianca_com_multiplas_evidencias():
+    resultado = classificar_com_evidencia(
+        "Como usuário, quero entrar na minha conta para realizar login."
+    )
+
+    assert resultado["confianca"] == 1.0
+
+def test_classificador_retorna_confianca_zero_para_estoria_desconhecida():
+    resultado = classificar_com_evidencia(
+        "Como usuário, quero consultar meu saldo de pontos."
+    )
+
+    assert resultado["dominio"] is None
+    assert resultado["palavras_encontradas"] == []
+    assert resultado["confianca"] == 0.0

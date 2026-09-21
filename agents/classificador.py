@@ -37,6 +37,15 @@ def _encontrar_evidencias(estoria, dominio):
         if palavra in texto
     ]
 
+def _calcular_confianca(evidencias):
+    if len(evidencias) == 0:
+        return 0.0
+
+    if len(evidencias) == 1:
+        return 0.5
+
+    return 1.0
+
 
 def identificar_dominio(estoria):
     prioridades = [
@@ -55,20 +64,27 @@ def identificar_dominio(estoria):
 
     return None
 
-
 def classificar_com_evidencia(estoria):
     dominio = identificar_dominio(estoria)
 
     if dominio is None:
         return {
             "dominio": None,
-            "palavras_encontradas": []
-        }
+            "palavras_encontradas": [],
+            "confianca": 0.0
+    }
+
+    evidencias = _encontrar_evidencias(
+        estoria,
+        dominio
+    )
+
+    confianca = _calcular_confianca(evidencias)
 
     return {
         "dominio": dominio,
-        "palavras_encontradas": _encontrar_evidencias(
-            estoria,
-            dominio
-        )
+        "palavras_encontradas": evidencias,
+        "confianca": confianca
     }
+
+

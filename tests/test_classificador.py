@@ -1,5 +1,8 @@
-from agents.classificador import identificar_dominio
-from agents.classificador import identificar_dominio, PALAVRAS_CHAVE
+from agents.classificador import (
+    identificar_dominio,
+    classificar_com_evidencia,
+    PALAVRAS_CHAVE
+)
 
 def test_classificador_identifica_login():
     assert identificar_dominio(
@@ -46,3 +49,28 @@ def test_classificador_identifica_login_por_palavra_chave():
     assert identificar_dominio(
         "Como usuário, quero entrar na minha conta."
     ) == "login"
+
+def test_classificador_retorna_evidencia():
+    resultado = classificar_com_evidencia(
+        "Como usuário, quero realizar login."
+    )
+
+    assert resultado["dominio"] == "login"
+    assert "login" in resultado["palavras_encontradas"]
+
+def test_classificador_retorna_evidencia_vazia_para_estoria_desconhecida():
+    resultado = classificar_com_evidencia(
+        "Como usuário, quero consultar meu saldo de pontos."
+    )
+
+    assert resultado["dominio"] is None
+    assert resultado["palavras_encontradas"] == []
+
+def test_classificador_identifica_multiplas_evidencias():
+    resultado = classificar_com_evidencia(
+        "Como usuário, quero entrar na minha conta para realizar login."
+    )
+
+    assert resultado["dominio"] == "login"
+    assert "login" in resultado["palavras_encontradas"]
+    assert "entrar na minha conta" in resultado["palavras_encontradas"]

@@ -28,20 +28,47 @@ PALAVRAS_CHAVE = {
     ]
 }
 
-def identificar_dominio(estoria):
+def _encontrar_evidencias(estoria, dominio):
     texto = estoria.lower()
 
+    return [
+        palavra
+        for palavra in PALAVRAS_CHAVE[dominio]
+        if palavra in texto
+    ]
+
+
+def identificar_dominio(estoria):
     prioridades = [
         "recuperacao_senha",
         "login",
         "cadastro",
         "pix",
         "renegociacao"
-
     ]
+
     for dominio in prioridades:
-        for palavra in PALAVRAS_CHAVE[dominio]:
-            if palavra in texto:
-                return dominio
-            
+        evidencias = _encontrar_evidencias(estoria, dominio)
+
+        if evidencias:
+            return dominio
+
     return None
+
+
+def classificar_com_evidencia(estoria):
+    dominio = identificar_dominio(estoria)
+
+    if dominio is None:
+        return {
+            "dominio": None,
+            "palavras_encontradas": []
+        }
+
+    return {
+        "dominio": dominio,
+        "palavras_encontradas": _encontrar_evidencias(
+            estoria,
+            dominio
+        )
+    }

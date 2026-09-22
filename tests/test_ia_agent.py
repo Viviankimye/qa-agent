@@ -181,3 +181,10 @@ def test_todos_os_dominios_geram_resultado_valido(dominio):
 )
 def test_classificacao_de_estorias(estoria, dominio_esperado):
     assert identificar_dominio(estoria) == dominio_esperado
+
+def test_ia_agent_identifica_classificacao_com_baixa_confianca():
+    resultado = gerar_massa(
+        "Como usuário, quero realizar login."
+    )
+
+    assert resultado["confianca"] == 0.5

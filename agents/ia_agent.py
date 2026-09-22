@@ -1,5 +1,5 @@
 from tools.validator import validar_resultado
-from agents.classificador import identificar_dominio
+from agents.classificador import identificar_dominio, classificar_com_evidencia
 from domains import (
     login,
     cadastro,
@@ -23,17 +23,22 @@ def gerar_por_dominio(dominio):
     return DOMINIOS[dominio]()
 
 def gerar_massa(estoria):
-    dominio = identificar_dominio(estoria)
+    classificacao = classificar_com_evidencia(estoria)
+    dominio = classificacao["dominio"]
+    confianca = classificacao["confianca"]
 
     if dominio is None:
         return {
             "cenarios": ["Cenário não identificado"],
-            "massas": []
+            "massas": [],
+            "confianca": confianca
         }
 
     resultado = gerar_por_dominio(dominio)
 
     if not validar_resultado(resultado):
         raise ValueError("Resultado gerado pelo agente é inválido")
+
+    resultado["confianca"] = confianca
 
     return resultado

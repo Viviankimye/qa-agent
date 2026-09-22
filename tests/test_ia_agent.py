@@ -196,3 +196,11 @@ def test_ia_agent_sinaliza_baixa_confianca():
 
     assert resultado["confianca"] == 0.5
     assert resultado["alerta"] == "Baixa confiança na classificação"
+
+def test_ia_agent_nao_sinaliza_alta_confianca():
+    resultado = gerar_massa(
+        "Como usuário, quero entrar na minha conta para realizar login."
+    )
+
+    assert resultado["confianca"] == 1.0
+    assert "alerta" not in resultado    

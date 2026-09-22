@@ -41,4 +41,7 @@ def gerar_massa(estoria):
 
     resultado["confianca"] = confianca
 
+    if confianca < 1.0:
+        resultado["alerta"] = "Baixa confiança na classificação"
+
     return resultado

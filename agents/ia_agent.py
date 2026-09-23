@@ -1,3 +1,4 @@
+from tools.quality_gate import avaliar_resultado
 from tools.validator import validar_resultado
 from agents.classificador import identificar_dominio, classificar_com_evidencia
 from domains import (
@@ -40,6 +41,7 @@ def gerar_massa(estoria):
         raise ValueError("Resultado gerado pelo agente é inválido")
 
     resultado["confianca"] = confianca
+    resultado["quality_gate"] = avaliar_resultado(resultado)
 
     if confianca < 1.0:
         resultado["alerta"] = "Baixa confiança na classificação"

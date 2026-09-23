@@ -67,4 +67,4 @@ def test_quality_gate_reprova_resultado_sem_massas():
         "confianca": 1.0
     }
 
-    assert avaliar_resultado(resultado) is False    
+    assert avaliar_resultado(resultado) is False

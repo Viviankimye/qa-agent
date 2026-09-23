@@ -204,3 +204,19 @@ def test_ia_agent_nao_sinaliza_alta_confianca():
 
     assert resultado["confianca"] == 1.0
     assert "alerta" not in resultado    
+
+def test_ia_agent_reprova_resultado_com_baixa_confianca_no_quality_gate():
+    resultado = gerar_massa(
+        "Como usuário, quero realizar login."
+    )
+
+    assert resultado["confianca"] == 0.5
+    assert resultado["quality_gate"] is False
+
+def test_ia_agent_aprova_resultado_com_alta_confianca_no_quality_gate():
+    resultado = gerar_massa(
+        "Como usuário, quero entrar na minha conta para realizar login."
+    )
+
+    assert resultado["confianca"] == 1.0
+    assert resultado["quality_gate"] is True

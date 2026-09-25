@@ -1,11 +1,16 @@
 def avaliar_resultado(resultado):
+    motivos = []
+
     if resultado["confianca"] != 1.0:
-        return False
+        motivos.append("Baixa confiança na classificação")
 
     if not resultado["cenarios"]:
-        return False
+        motivos.append("Resultado sem cenários")
 
     if not resultado["massas"]:
-        return False
+        motivos.append("Resultado sem massas")
 
-    return True
+    return {
+        "aprovado": len(motivos) == 0,
+        "motivos": motivos
+    }

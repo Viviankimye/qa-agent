@@ -211,7 +211,8 @@ def test_ia_agent_reprova_resultado_com_baixa_confianca_no_quality_gate():
     )
 
     assert resultado["confianca"] == 0.5
-    assert resultado["quality_gate"] is False
+    assert resultado["quality_gate"]["aprovado"] is False
+    assert "Baixa confiança na classificação" in resultado["quality_gate"]["motivos"]
 
 def test_ia_agent_aprova_resultado_com_alta_confianca_no_quality_gate():
     resultado = gerar_massa(
@@ -219,4 +220,5 @@ def test_ia_agent_aprova_resultado_com_alta_confianca_no_quality_gate():
     )
 
     assert resultado["confianca"] == 1.0
-    assert resultado["quality_gate"] is True
+    assert resultado["quality_gate"]["aprovado"] is True
+    assert resultado["quality_gate"]["motivos"] == []

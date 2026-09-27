@@ -38,3 +38,18 @@ def test_pipeline_executa_guardrail():
 
     assert "guardrail" in resultado
     assert resultado["guardrail"]["aprovado"] is True
+
+
+def test_pipeline_registra_eventos_de_observabilidade():
+    resultado = executar_pipeline(
+        "Como usuário, quero entrar na minha conta para realizar login."
+    )
+
+    assert "eventos" in resultado
+    assert "Spec criada" in resultado["eventos"]
+    assert "Plano criado" in resultado["eventos"]
+    assert "Guardrail aprovado" in resultado["eventos"]
+    assert "Execução realizada" in resultado["eventos"]
+    assert "Verificação realizada" in resultado["eventos"]
+    assert "Judge executado" in resultado["eventos"]
+    assert "Completion Gate executado" in resultado["eventos"]

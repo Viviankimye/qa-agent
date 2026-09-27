@@ -4,12 +4,22 @@ from harness.executor import executar_plano
 from harness.verifier import verificar_resultado
 from harness.judge import julgar_resultado
 from harness.completion_gate import validar_conclusao
+from harness.guardrails import validar_plano
 
 
 def executar_pipeline(estoria):
     spec = criar_spec(estoria)
 
     plano = criar_plano(spec)
+
+    guardrail = validar_plano(plano)
+
+    if not guardrail["aprovado"]:
+        return {
+            "spec": spec,
+            "plano": plano,
+            "guardrail": guardrail
+        }
 
     resultado = executar_plano(plano)
 
@@ -31,6 +41,7 @@ def executar_pipeline(estoria):
     return {
         "spec": spec,
         "plano": plano,
+        "guardrail": guardrail,
         "resultado": resultado,
         "verificacao": verificacao,
         "julgamento": julgamento,

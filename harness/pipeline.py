@@ -6,7 +6,7 @@ from harness.judge import julgar_resultado
 from harness.completion_gate import validar_conclusao
 from harness.guardrails import validar_plano
 from harness.observability import registrar_evento
-
+from harness.resilience import avaliar_resiliencia
 
 def executar_pipeline(estoria):
     eventos = []
@@ -20,37 +20,76 @@ def executar_pipeline(estoria):
     guardrail = validar_plano(plano)
 
     if not guardrail["aprovado"]:
-        registrar_evento(eventos, "Guardrail reprovado")
+        registrar_evento(
+            eventos,
+            "Guardrail reprovado"
+        )
+
+        resiliencia = avaliar_resiliencia(
+            guardrail
+        )
+
+        if resiliencia["intervencao_humana"]:
+            registrar_evento(
+                eventos,
+                "Intervenção humana solicitada"
+            )
 
         return {
             "spec": spec,
             "plano": plano,
             "guardrail": guardrail,
+            "resiliencia": resiliencia,
             "eventos": eventos
         }
 
-    registrar_evento(eventos, "Guardrail aprovado")
+    registrar_evento(
+        eventos,
+        "Guardrail aprovado"
+    )
 
     resultado = executar_plano(plano)
-    registrar_evento(eventos, "Execução realizada")
+    registrar_evento(
+        eventos,
+        "Execução realizada"
+    )
 
     verificacao = verificar_resultado(
         spec,
         resultado
     )
-    registrar_evento(eventos, "Verificação realizada")
+    registrar_evento(
+        eventos,
+        "Verificação realizada"
+    )
 
     julgamento = julgar_resultado(
         resultado,
         verificacao
     )
-    registrar_evento(eventos, "Judge executado")
+    registrar_evento(
+        eventos,
+        "Judge executado"
+    )
 
     completion_gate = validar_conclusao(
         verificacao,
         julgamento
     )
-    registrar_evento(eventos, "Completion Gate executado")
+    registrar_evento(
+        eventos,
+        "Completion Gate executado"
+    )
+
+    resiliencia = avaliar_resiliencia(
+        completion_gate
+    )
+
+    if resiliencia["intervencao_humana"]:
+        registrar_evento(
+            eventos,
+            "Intervenção humana solicitada"
+        )
 
     return {
         "spec": spec,
@@ -60,5 +99,6 @@ def executar_pipeline(estoria):
         "verificacao": verificacao,
         "julgamento": julgamento,
         "completion_gate": completion_gate,
+        "resiliencia": resiliencia,
         "eventos": eventos
     }

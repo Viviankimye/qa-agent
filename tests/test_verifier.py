@@ -125,3 +125,51 @@ def test_verifier_reprova_resultado_sem_campo_massas():
 
     assert avaliacao["aprovado"] is False
     assert "Resultado sem massas" in avaliacao["motivos"]
+
+
+def test_verifier_reprova_resultado_none():
+    spec = {
+        "dominio": "login",
+        "requisitos": {
+            "cenarios": True,
+            "massas": True,
+            "validacao": True
+        }
+    }
+
+    avaliacao = verificar_resultado(spec, None)
+
+    assert avaliacao["aprovado"] is False
+    assert "Resultado inválido" in avaliacao["motivos"]
+
+
+def test_verifier_reprova_resultado_lista():
+    spec = {
+        "dominio": "login",
+        "requisitos": {
+            "cenarios": True,
+            "massas": True,
+            "validacao": True
+        }
+    }
+
+    avaliacao = verificar_resultado(spec, [])
+
+    assert avaliacao["aprovado"] is False
+    assert "Resultado inválido" in avaliacao["motivos"]
+
+
+def test_verifier_reprova_resultado_string():
+    spec = {
+        "dominio": "login",
+        "requisitos": {
+            "cenarios": True,
+            "massas": True,
+            "validacao": True
+        }
+    }
+
+    avaliacao = verificar_resultado(spec, "resultado inválido")
+
+    assert avaliacao["aprovado"] is False
+    assert "Resultado inválido" in avaliacao["motivos"]

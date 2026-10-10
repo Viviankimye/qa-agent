@@ -1,4 +1,10 @@
 def verificar_resultado(spec, resultado):
+    if not isinstance(resultado, dict):
+        return {
+            "aprovado": False,
+            "motivos": ["Resultado inválido"]
+        }
+
     motivos = []
 
     if resultado.get("confianca", 1.0) < 1.0:

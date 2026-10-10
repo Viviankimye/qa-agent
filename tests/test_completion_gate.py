@@ -139,3 +139,25 @@ def test_completion_gate_reprova_verifier_com_motivo_invalido():
         "Verifier com item de motivos inválido"
         in resultado["motivos"]
     )
+
+def test_completion_gate_reprova_judge_com_motivos_invalidos():
+    verificacao = {
+        "aprovado": True,
+        "motivos": []
+    }
+
+    julgamento = {
+        "aprovado": True,
+        "motivos": "nenhum problema"
+    }
+
+    resultado = validar_conclusao(
+        verificacao,
+        julgamento
+    )
+
+    assert resultado["aprovado"] is False
+    assert (
+        "Judge com campo motivos inválido"
+        in resultado["motivos"]
+    )

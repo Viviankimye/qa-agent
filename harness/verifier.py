@@ -5,6 +5,20 @@ def verificar_resultado(spec, resultado):
             "motivos": ["Resultado inválido"]
         }
 
+    if (
+        not isinstance(spec, dict)
+        or not isinstance(spec.get("dominio"), str)
+        or not spec["dominio"].strip()
+        or not isinstance(spec.get("requisitos"), dict)
+        or "cenarios" not in spec["requisitos"]
+        or "massas" not in spec["requisitos"]
+        or "validacao" not in spec["requisitos"]
+    ):
+        return {
+            "aprovado": False,
+            "motivos": ["Spec inválida"]
+        }
+
     motivos = []
 
     if resultado.get("confianca", 1.0) < 1.0:

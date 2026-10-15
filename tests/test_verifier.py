@@ -173,3 +173,120 @@ def test_verifier_reprova_resultado_string():
 
     assert avaliacao["aprovado"] is False
     assert "Resultado inválido" in avaliacao["motivos"]
+
+
+def test_verifier_reprova_spec_none():
+    resultado = {
+        "dominio": "login",
+        "cenarios": ["Login válido"],
+        "massas": [
+            {
+                "email": "cliente@email.com",
+                "senha": "Senha123"
+            }
+        ]
+    }
+
+    avaliacao = verificar_resultado(None, resultado)
+
+    assert avaliacao["aprovado"] is False
+    assert "Spec inválida" in avaliacao["motivos"]
+
+
+def test_verifier_reprova_spec_sem_requisitos():
+    spec = {
+        "dominio": "login"
+    }
+
+    resultado = {
+        "dominio": "login",
+        "cenarios": ["Login válido"],
+        "massas": [
+            {
+                "email": "cliente@email.com",
+                "senha": "Senha123"
+            }
+        ]
+    }
+
+    avaliacao = verificar_resultado(spec, resultado)
+
+    assert avaliacao["aprovado"] is False
+    assert "Spec inválida" in avaliacao["motivos"]
+
+
+def test_verifier_reprova_spec_sem_dominio():
+    spec = {
+        "requisitos": {
+            "cenarios": True,
+            "massas": True,
+            "validacao": True
+        }
+    }
+
+    resultado = {
+        "dominio": "login",
+        "cenarios": ["Login válido"],
+        "massas": [
+            {
+                "email": "cliente@email.com",
+                "senha": "Senha123"
+            }
+        ]
+    }
+
+    avaliacao = verificar_resultado(spec, resultado)
+
+    assert avaliacao["aprovado"] is False
+    assert "Spec inválida" in avaliacao["motivos"]
+
+
+
+def test_verifier_reprova_requisitos_com_tipo_invalido():
+    spec = {
+        "dominio": "login",
+        "requisitos": "cenarios e massas"
+    }
+
+    resultado = {
+        "dominio": "login",
+        "cenarios": ["Login válido"],
+        "massas": [
+            {
+                "email": "cliente@email.com",
+                "senha": "Senha123"
+            }
+        ]
+    }
+
+    avaliacao = verificar_resultado(spec, resultado)
+
+    assert avaliacao["aprovado"] is False
+    assert "Spec inválida" in avaliacao["motivos"]
+
+
+
+def test_verifier_reprova_requisitos_sem_cenarios():
+    spec = {
+        "dominio": "login",
+        "requisitos": {
+            "massas": True,
+            "validacao": True
+        }
+    }
+
+    resultado = {
+        "dominio": "login",
+        "cenarios": ["Login válido"],
+        "massas": [
+            {
+                "email": "cliente@email.com",
+                "senha": "Senha123"
+            }
+        ]
+    }
+
+    avaliacao = verificar_resultado(spec, resultado)
+
+    assert avaliacao["aprovado"] is False
+    assert "Spec inválida" in avaliacao["motivos"]

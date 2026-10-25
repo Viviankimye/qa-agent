@@ -92,3 +92,18 @@ def test_rejeita_url_com_credenciais():
 
     assert avaliacao["aprovado"] is False
     assert "Alvo de segurança inválido" in avaliacao["motivos"]
+
+
+def test_rejeita_escopo_com_url_invalida():
+    avaliacao = guardrails.validar_escopo_seguranca(
+        {
+            "alvos": [
+                "https://staging.example.com",
+                "nao-e-uma-url"
+            ]
+        },
+        "https://staging.example.com"
+    )
+
+    assert avaliacao["aprovado"] is False
+    assert "Escopo de segurança inválido" in avaliacao["motivos"]

@@ -53,12 +53,18 @@ def validar_escopo_seguranca(escopo_autorizado, alvo):
 
     if not url_https_valida(alvo):
         motivos.append("Alvo de segurança inválido")
-    elif (
+
+    if (
         isinstance(escopo_autorizado, dict)
         and isinstance(escopo_autorizado.get("alvos"), list)
-        and alvo not in escopo_autorizado["alvos"]
     ):
-        motivos.append("Alvo fora do escopo autorizado")
+        alvos_autorizados = escopo_autorizado["alvos"]
+
+        if not all(url_https_valida(item) for item in alvos_autorizados):
+            motivos.append("Escopo de segurança inválido")
+        elif url_https_valida(alvo) and alvo not in alvos_autorizados:
+            motivos.append("Alvo fora do escopo autorizado")
+
 
     return {
         "aprovado": len(motivos) == 0,

@@ -1,4 +1,6 @@
+
 from domains.login import gerar
+from harness.guardrails import validar_plano
 
 
 EXECUTORES = {
@@ -7,6 +9,11 @@ EXECUTORES = {
 
 
 def executar_plano(plano):
+    guardrail = validar_plano(plano)
+
+    if not guardrail["aprovado"]:
+        raise ValueError("Plano reprovado")
+
     dominio = plano["dominio"]
 
     if dominio not in EXECUTORES:

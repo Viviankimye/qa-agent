@@ -44,3 +44,51 @@ def test_aceita_alvo_dentro_do_escopo():
 
     assert avaliacao["aprovado"] is True
     assert avaliacao["motivos"] == []
+
+
+def test_rejeita_alvo_que_nao_e_uma_url():
+    alvo = "nao-e-uma-url"
+
+    avaliacao = guardrails.validar_escopo_seguranca(
+        {"alvos": [alvo]},
+        alvo
+    )
+
+    assert avaliacao["aprovado"] is False
+    assert "Alvo de segurança inválido" in avaliacao["motivos"]
+
+
+def test_rejeita_url_com_http():
+    alvo = "http://staging.example.com"
+
+    avaliacao = guardrails.validar_escopo_seguranca(
+        {"alvos": [alvo]},
+        alvo
+    )
+
+    assert avaliacao["aprovado"] is False
+    assert "Alvo de segurança inválido" in avaliacao["motivos"]
+
+
+def test_rejeita_url_sem_hostname():
+    alvo = "https:///"
+
+    avaliacao = guardrails.validar_escopo_seguranca(
+        {"alvos": [alvo]},
+        alvo
+    )
+
+    assert avaliacao["aprovado"] is False
+    assert "Alvo de segurança inválido" in avaliacao["motivos"]
+
+
+def test_rejeita_url_com_credenciais():
+    alvo = "https://usuario:senha@staging.example.com"
+
+    avaliacao = guardrails.validar_escopo_seguranca(
+        {"alvos": [alvo]},
+        alvo
+    )
+
+    assert avaliacao["aprovado"] is False
+    assert "Alvo de segurança inválido" in avaliacao["motivos"]

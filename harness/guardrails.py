@@ -1,3 +1,5 @@
+from urllib.parse import urlsplit
+
 def validar_plano(plano):
     motivos = []
 
@@ -34,7 +36,22 @@ def validar_escopo_seguranca(escopo_autorizado, alvo):
     ):
         motivos.append("Escopo de segurança inválido")
 
-    if not isinstance(alvo, str) or not alvo.strip():
+    def url_https_valida(valor):
+        if not isinstance(valor, str) or not valor.strip():
+            return False
+
+        try:
+            url = urlsplit(valor)
+            return (
+                url.scheme == "https"
+                and bool(url.hostname)
+                and url.username is None
+                and url.password is None
+            )
+        except ValueError:
+            return False
+
+    if not url_https_valida(alvo):
         motivos.append("Alvo de segurança inválido")
     elif (
         isinstance(escopo_autorizado, dict)

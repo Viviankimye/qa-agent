@@ -56,3 +56,13 @@ def test_executor_bloqueia_plano_com_confianca_baixa(monkeypatch):
 
     with pytest.raises(ValueError, match="Plano reprovado"):
         executor.executar_plano(plano)
+
+
+def test_executor_bloqueia_plano_sem_confianca():
+    plano = {
+        "dominio": "login",
+        "tarefas": ["gerar cenários"]
+    }
+
+    with pytest.raises(ValueError, match="Plano reprovado"):
+        executar_plano(plano)

@@ -1,27 +1,45 @@
 from urllib.parse import urlsplit
 
+
 def validar_plano(plano):
     motivos = []
 
-    if plano["confianca"] < 1.0:
-        motivos.append(
-            "Baixa confiança para execução"
-        )
+    if not isinstance(plano, dict):
+        return {
+            "aprovado": False,
+            "motivos": ["Plano inválido"]
+        }
 
-    if plano["dominio"] is None:
-        motivos.append(
-            "Domínio não definido para execução"
-        )
+    campos_obrigatorios = ["confianca", "dominio", "tarefas"]
+    campos_ausentes = [
+        campo for campo in campos_obrigatorios
+        if campo not in plano
+    ]
 
-    if not plano["tarefas"]:
-        motivos.append(
-            "Plano sem tarefas para execução"
-        )
+    if campos_ausentes:
+        motivos.append("Plano inválido: campos obrigatórios ausentes")
+
+    confianca = plano.get("confianca")
+    if (
+        isinstance(confianca, bool)
+        or not isinstance(confianca, (int, float))
+        or confianca < 1.0
+    ):
+        motivos.append("Baixa confiança para execução")
+
+    dominio = plano.get("dominio")
+    if not isinstance(dominio, str) or not dominio.strip():
+        motivos.append("Domínio não definido para execução")
+
+    tarefas = plano.get("tarefas")
+    if not isinstance(tarefas, list) or not tarefas:
+        motivos.append("Plano sem tarefas para execução")
 
     return {
         "aprovado": len(motivos) == 0,
         "motivos": motivos
     }
+
 
 
 def validar_escopo_seguranca(escopo_autorizado, alvo):
@@ -64,7 +82,6 @@ def validar_escopo_seguranca(escopo_autorizado, alvo):
             motivos.append("Escopo de segurança inválido")
         elif url_https_valida(alvo) and alvo not in alvos_autorizados:
             motivos.append("Alvo fora do escopo autorizado")
-
 
     return {
         "aprovado": len(motivos) == 0,

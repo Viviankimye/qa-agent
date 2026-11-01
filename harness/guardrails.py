@@ -23,6 +23,7 @@ def validar_plano(plano):
     if (
         isinstance(confianca, bool)
         or not isinstance(confianca, (int, float))
+        or not 0 <= confianca <= 1
         or confianca < 1.0
     ):
         motivos.append("Baixa confiança para execução")

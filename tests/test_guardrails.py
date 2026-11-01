@@ -116,3 +116,28 @@ def test_guardrail_reprova_confianca_booleana():
 
     assert resultado["aprovado"] is False
     assert "Baixa confiança para execução" in resultado["motivos"]
+
+def test_guardrail_reprova_confianca_negativa():
+    plano = {
+        "dominio": "login",
+        "confianca": -0.5,
+        "tarefas": ["gerar cenários"]
+    }
+
+    resultado = validar_plano(plano)
+
+    assert resultado["aprovado"] is False
+    assert "Baixa confiança para execução" in resultado["motivos"]
+
+
+def test_guardrail_reprova_confianca_acima_de_um():
+    plano = {
+        "dominio": "login",
+        "confianca": 1.5,
+        "tarefas": ["gerar cenários"]
+    }
+
+    resultado = validar_plano(plano)
+
+    assert resultado["aprovado"] is False
+    assert "Baixa confiança para execução" in resultado["motivos"]

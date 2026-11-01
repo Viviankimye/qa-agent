@@ -61,3 +61,58 @@ def test_guardrail_reprova_plano_sem_tarefas():
 
     assert resultado["aprovado"] is False
     assert "Plano sem tarefas para execução" in resultado["motivos"]
+
+def test_guardrail_reprova_plano_sem_campo_dominio():
+    plano = {
+        "confianca": 1.0,
+        "tarefas": ["gerar cenários"]
+    }
+
+    resultado = validar_plano(plano)
+
+    assert resultado["aprovado"] is False
+    assert "Plano inválido: campos obrigatórios ausentes" in resultado["motivos"]
+
+
+def test_guardrail_reprova_plano_sem_campo_tarefas():
+    plano = {
+        "dominio": "login",
+        "confianca": 1.0
+    }
+
+    resultado = validar_plano(plano)
+
+    assert resultado["aprovado"] is False
+    assert "Plano inválido: campos obrigatórios ausentes" in resultado["motivos"]
+
+def test_guardrail_reprova_plano_que_nao_e_dicionario():
+    plano = ["login", 1.0, ["gerar cenários"]]
+
+    resultado = validar_plano(plano)
+
+    assert resultado["aprovado"] is False
+    assert "Plano inválido" in resultado["motivos"]
+
+def test_guardrail_reprova_confianca_com_tipo_invalido():
+    plano = {
+        "dominio": "login",
+        "confianca": "alta",
+        "tarefas": ["gerar cenários"]
+    }
+
+    resultado = validar_plano(plano)
+
+    assert resultado["aprovado"] is False
+    assert "Baixa confiança para execução" in resultado["motivos"]
+
+def test_guardrail_reprova_confianca_booleana():
+    plano = {
+        "dominio": "login",
+        "confianca": True,
+        "tarefas": ["gerar cenários"]
+    }
+
+    resultado = validar_plano(plano)
+
+    assert resultado["aprovado"] is False
+    assert "Baixa confiança para execução" in resultado["motivos"]

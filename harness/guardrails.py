@@ -1,3 +1,4 @@
+import math
 from urllib.parse import urlsplit
 
 
@@ -23,6 +24,7 @@ def validar_plano(plano):
     if (
         isinstance(confianca, bool)
         or not isinstance(confianca, (int, float))
+        or not math.isfinite(confianca)
         or not 0 <= confianca <= 1
         or confianca < 1.0
     ):
@@ -40,9 +42,6 @@ def validar_plano(plano):
         "aprovado": len(motivos) == 0,
         "motivos": motivos
     }
-
-
-
 def validar_escopo_seguranca(escopo_autorizado, alvo):
     motivos = []
 

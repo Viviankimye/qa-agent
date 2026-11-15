@@ -166,3 +166,55 @@ def test_guardrail_reprova_confianca_infinita():
 
     assert resultado["aprovado"] is False
     assert "Baixa confiança para execução" in resultado["motivos"]
+
+
+def test_guardrail_reprova_tarefa_com_valor_none():
+    plano = {
+        "dominio": "login",
+        "confianca": 1.0,
+        "tarefas": ["gerar cenários", None]
+    }
+
+    resultado = validar_plano(plano)
+
+    assert resultado["aprovado"] is False
+    assert "Tarefas inválidas no plano" in resultado["motivos"]
+
+
+def test_guardrail_reprova_tarefa_com_string_vazia():
+    plano = {
+        "dominio": "login",
+        "confianca": 1.0,
+        "tarefas": ["gerar cenários", ""]
+    }
+
+    resultado = validar_plano(plano)
+
+    assert resultado["aprovado"] is False
+    assert "Tarefas inválidas no plano" in resultado["motivos"]
+
+
+def test_guardrail_reprova_tarefa_com_apenas_espacos():
+    plano = {
+        "dominio": "login",
+        "confianca": 1.0,
+        "tarefas": ["gerar cenários", "   "]
+    }
+
+    resultado = validar_plano(plano)
+
+    assert resultado["aprovado"] is False
+    assert "Tarefas inválidas no plano" in resultado["motivos"]
+
+
+def test_guardrail_reprova_tarefa_com_tipo_invalido():
+    plano = {
+        "dominio": "login",
+        "confianca": 1.0,
+        "tarefas": ["gerar cenários", 123]
+    }
+
+    resultado = validar_plano(plano)
+
+    assert resultado["aprovado"] is False
+    assert "Tarefas inválidas no plano" in resultado["motivos"]

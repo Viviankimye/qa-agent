@@ -35,13 +35,21 @@ def validar_plano(plano):
         motivos.append("Domínio não definido para execução")
 
     tarefas = plano.get("tarefas")
+
     if not isinstance(tarefas, list) or not tarefas:
         motivos.append("Plano sem tarefas para execução")
+    elif not all(
+        isinstance(tarefa, str) and tarefa.strip()
+        for tarefa in tarefas
+    ):
+        motivos.append("Tarefas inválidas no plano")
 
     return {
         "aprovado": len(motivos) == 0,
         "motivos": motivos
     }
+
+
 def validar_escopo_seguranca(escopo_autorizado, alvo):
     motivos = []
 

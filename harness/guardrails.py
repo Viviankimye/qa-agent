@@ -1,6 +1,6 @@
+﻿import ipaddress
 import math
 from urllib.parse import urlsplit
-
 
 def validar_plano(plano):
     motivos = []
@@ -68,12 +68,36 @@ def validar_escopo_seguranca(escopo_autorizado, alvo):
 
         try:
             url = urlsplit(valor)
-            return (
-                url.scheme == "https"
-                and bool(url.hostname)
-                and url.username is None
-                and url.password is None
-            )
+            hostname = url.hostname
+
+            # Valida protocolo, hostname e credenciais
+            if (
+                url.scheme != "https"
+                or not hostname
+                or url.username is not None
+                or url.password is not None
+            ):
+                return False
+
+            # Valida se a porta está bem formada
+            _ = url.port
+
+            hostname = hostname.rstrip(".").lower()
+
+            # Bloqueia localhost e seus subdomínios
+            if hostname == "localhost" or hostname.endswith(".localhost"):
+                return False
+
+            # Identifica se o hostname é um endereço IP
+            try:
+                endereco_ip = ipaddress.ip_address(hostname)
+            except ValueError:
+                # Hostname DNS: mantém a validação atual
+                return True
+
+            # Somente IPs globalmente roteáveis são aceitos
+            return endereco_ip.is_global
+
         except ValueError:
             return False
 

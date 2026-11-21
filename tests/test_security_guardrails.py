@@ -107,3 +107,87 @@ def test_rejeita_escopo_com_url_invalida():
 
     assert avaliacao["aprovado"] is False
     assert "Escopo de segurança inválido" in avaliacao["motivos"]
+
+
+def test_rejeita_localhost():
+    alvo = "https://localhost"
+
+    avaliacao = guardrails.validar_escopo_seguranca(
+        {"alvos": [alvo]},
+        alvo
+    )
+
+    assert avaliacao["aprovado"] is False
+    assert "Alvo de segurança inválido" in avaliacao["motivos"]
+
+
+def test_rejeita_ip_loopback():
+    alvo = "https://127.0.0.1"
+
+    avaliacao = guardrails.validar_escopo_seguranca(
+        {"alvos": [alvo]},
+        alvo
+    )
+
+    assert avaliacao["aprovado"] is False
+    assert "Alvo de segurança inválido" in avaliacao["motivos"]
+
+
+def test_rejeita_ip_privado():
+    alvo = "https://192.168.1.10"
+
+    avaliacao = guardrails.validar_escopo_seguranca(
+        {"alvos": [alvo]},
+        alvo
+    )
+
+    assert avaliacao["aprovado"] is False
+    assert "Alvo de segurança inválido" in avaliacao["motivos"]
+
+
+def test_rejeita_ip_privado_faixa_10():
+    alvo = "https://10.0.0.5"
+
+    avaliacao = guardrails.validar_escopo_seguranca(
+        {"alvos": [alvo]},
+        alvo
+    )
+
+    assert avaliacao["aprovado"] is False
+    assert "Alvo de segurança inválido" in avaliacao["motivos"]
+
+
+def test_rejeita_ipv6_loopback():
+    alvo = "https://[::1]"
+
+    avaliacao = guardrails.validar_escopo_seguranca(
+        {"alvos": [alvo]},
+        alvo
+    )
+
+    assert avaliacao["aprovado"] is False
+    assert "Alvo de segurança inválido" in avaliacao["motivos"]
+
+
+def test_rejeita_ipv6_privado():
+    alvo = "https://[fc00::1]"
+
+    avaliacao = guardrails.validar_escopo_seguranca(
+        {"alvos": [alvo]},
+        alvo
+    )
+
+    assert avaliacao["aprovado"] is False
+    assert "Alvo de segurança inválido" in avaliacao["motivos"]
+
+
+def test_rejeita_porta_invalida():
+    alvo = "https://staging.example.com:abc"
+
+    avaliacao = guardrails.validar_escopo_seguranca(
+        {"alvos": [alvo]},
+        alvo
+    )
+
+    assert avaliacao["aprovado"] is False
+    assert "Alvo de segurança inválido" in avaliacao["motivos"]

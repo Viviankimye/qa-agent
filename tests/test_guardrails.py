@@ -218,3 +218,42 @@ def test_guardrail_reprova_tarefa_com_tipo_invalido():
 
     assert resultado["aprovado"] is False
     assert "Tarefas inválidas no plano" in resultado["motivos"]
+
+
+def test_guardrail_reprova_dominio_com_apenas_espacos():
+    plano = {
+        "dominio": "   ",
+        "confianca": 1.0,
+        "tarefas": ["gerar cenários"]
+    }
+
+    resultado = validar_plano(plano)
+
+    assert resultado["aprovado"] is False
+    assert "Domínio não definido para execução" in resultado["motivos"]
+
+
+def test_guardrail_reprova_dominio_com_tipo_invalido():
+    plano = {
+        "dominio": 123,
+        "confianca": 1.0,
+        "tarefas": ["gerar cenários"]
+    }
+
+    resultado = validar_plano(plano)
+
+    assert resultado["aprovado"] is False
+    assert "Domínio não definido para execução" in resultado["motivos"]
+
+
+def test_guardrail_reprova_plano_sem_confianca():
+    plano = {
+        "dominio": "login",
+        "tarefas": ["gerar cenários"]
+    }
+
+    resultado = validar_plano(plano)
+
+    assert resultado["aprovado"] is False
+    assert "Plano inválido: campos obrigatórios ausentes" in resultado["motivos"]
+    assert "Baixa confiança para execução" in resultado["motivos"]
